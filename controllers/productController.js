@@ -39,8 +39,19 @@ router.get('/:productId/edit', (req, res)=>{
 router.post('/:productId/edit', (req, res)=>{
     
 })
-router.get('/:productId/buy', (req, res)=>{
-
+router.get('/:productId/enroll', (req, res)=>{
+    productService.getOne(req.params.productId)
+        .then(course =>{
+            if(!course.usersEnrolled.includes(req.user._id)){
+              course.usersEnrolled.push(req.user._id);
+              productService.updateOne(req.params.productId, course)
+                .then(updated =>{
+                    console.log(updated)
+                    res.redirect(`/products/${req.params.productId}/details`);
+                })
+           }
+        })
+        .catch(err => console.log(err))
 })
 router.get('/:productId/delete', (req, res)=>{
     
