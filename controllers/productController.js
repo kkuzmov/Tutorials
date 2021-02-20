@@ -34,10 +34,19 @@ router.get('/:productId/details', (req, res)=>{
             .catch(err => console.log(err));
 })
 router.get('/:productId/edit', (req, res)=>{
-    
+    productService.getOne(req.params.productId)
+        .then(course =>{
+            res.render('edit-course', {title: 'Edit course', course})
+        })
+        .catch(err => console.log(err))
 })
 router.post('/:productId/edit', (req, res)=>{
-    
+    let dataToSend = req.body;
+    productService.updateOne(req.params.productId, dataToSend)
+        .then(updated => {
+            res.redirect(`/products/${req.params.productId}/details`);
+        })
+        .catch(err => console.log(err))
 })
 router.get('/:productId/enroll', (req, res)=>{
     productService.getOne(req.params.productId)
@@ -54,7 +63,11 @@ router.get('/:productId/enroll', (req, res)=>{
         .catch(err => console.log(err))
 })
 router.get('/:productId/delete', (req, res)=>{
-    
+    productService.deleteOne(req.params.productId)
+        .then(deleted =>{
+            res.redirect('/')
+        })
+        .catch(err => console.log(err))
 })
 
 
