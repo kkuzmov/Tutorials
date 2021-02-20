@@ -15,7 +15,7 @@
             <a class="navbar-brand" href="/">Tutorials</a>
 
             <ul class="navbar-nav ml-auto">
-
+                {{#if isAuthenticated}}
                 <li class="nav-item">
                     <a class="nav-link" href="/">Welcome, {{user.username}}</a>
                 </li>
@@ -23,7 +23,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/auth/logout">Logout</a>
                 </li>
-
+                {{else}}
                 <li class="nav-item">
                     <a class="nav-link" href="/auth/login">Login</a>
                 </li>
@@ -31,7 +31,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/auth/register">Register</a>
                 </li>
-
+                {{/if}}
             </ul>
         </nav>
         {{#if error}}

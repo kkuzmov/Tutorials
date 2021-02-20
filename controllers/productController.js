@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
     productService.getAll(req.query)
         .then(courses =>{
             if(req.user){
-                courses = courses.sort((a,b)=> b.createdAt - a.createdAt)
+                courses = courses.sort((a,b)=> a.createdAt - b.createdAt);
                 res.render('user-home', {title: 'Home', courses})
             }else{
                 courses = courses.sort((a,b)=> b.usersEnrolled.length - a.usersEnrolled.length).slice(0,3);
@@ -19,12 +19,12 @@ router.get('/', (req, res) => {
         })
         .catch((error)=>res.status(404).render('/', {error}));
 })
-router.get('/create', (req, res) => {
+router.get('/create', isAuthenticated, (req, res) => {
         res.render('create-course', {title: 'Create a new course'});
 })
-router.post('/create', (req, res) => {
-    let courseData = req.body;
-    productService.createProduct({...courseData, creator: req.user._id})
+router.post('/create', isAuthenticated,(req, res) => {
+        let courseData = req.body;
+        productService.createProduct({...courseData, creator: req.user._id})
         .then(course =>{
             res.redirect('/');
         })
@@ -34,7 +34,7 @@ router.post('/create', (req, res) => {
         })
 
 })
-router.get('/:productId/details', (req, res)=>{
+router.get('/:productId/details', isAuthenticated,(req, res)=>{
         productService.getOne(req.params.productId)
             .then(course =>{
                 let isEnrolled = course.usersEnrolled.includes(req.user._id);
@@ -43,14 +43,14 @@ router.get('/:productId/details', (req, res)=>{
             })
             .catch(err => console.log(err));
 })
-router.get('/:productId/edit', (req, res)=>{
+router.get('/:productId/edit', isAuthenticated,(req, res)=>{
     productService.getOne(req.params.productId)
         .then(course =>{
             res.render('edit-course', {title: 'Edit course', course})
         })
         .catch(err => console.log(err))
 })
-router.post('/:productId/edit', (req, res)=>{
+router.post('/:productId/edit', isAuthenticated,(req, res)=>{
     let dataToSend = req.body;
     productService.updateOne(req.params.productId, dataToSend)
         .then(updated => {
@@ -58,7 +58,7 @@ router.post('/:productId/edit', (req, res)=>{
         })
         .catch(err => console.log(err))
 })
-router.get('/:productId/enroll', (req, res)=>{
+router.get('/:productId/enroll',isAuthenticated, (req, res)=>{
     productService.getOne(req.params.productId)
         .then(course =>{
             if(!course.usersEnrolled.includes(req.user._id)){
@@ -72,7 +72,7 @@ router.get('/:productId/enroll', (req, res)=>{
         })
         .catch(err => console.log(err))
 })
-router.get('/:productId/delete', (req, res)=>{
+router.get('/:productId/delete', isAuthenticated,(req, res)=>{
     productService.deleteOne(req.params.productId)
         .then(deleted =>{
             res.redirect('/')

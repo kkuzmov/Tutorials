@@ -7,10 +7,10 @@ const isGuest = require('../middlewares/isGuest');
 
 //ВТОРИЯТ ПАРАМЕТЪР НА .GET Е MIDDLEWARE - ВНИМАВАЙ ДАЛИ ГО ИЗПОЛЗВАШ!
 
-router.get('/login',(req, res) => {
+router.get('/login', isGuest,(req, res) => {
     res.render('login', {title: 'Login'});
 })
-router.post('/login', async (req, res)=>{
+router.post('/login',isGuest, async (req, res)=>{
     const {username, password} = req.body;
 
     try {
@@ -22,10 +22,10 @@ router.post('/login', async (req, res)=>{
         res.status(404).render('login', {error});
     }
 })
-router.get('/register',(req, res) => {
+router.get('/register',isGuest,(req, res) => {
     res.render('register', {title: 'Register'})
 })
-router.post('/register',async (req, res) => {
+router.post('/register',isGuest,async (req, res) => {
     const {username, password, rePassword } = req.body;
 
     if(password !== rePassword){
@@ -42,11 +42,12 @@ router.post('/register',async (req, res) => {
         res.status(404).render('login', {error})
     } 
 } catch (error) {
+        // let error = Object.keys(err?.errors).map(x => ({ message: err.errors[x].properties.message}))[0];
         res.status(404).render('register', {error})
         return;
 }
 })
-router.get('/logout', (req, res)=>{
+router.get('/logout',isAuthenticated, (req, res)=>{
     res.clearCookie(COOKIE_NAME);
     res.redirect('/')
 })
