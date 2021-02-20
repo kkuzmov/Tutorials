@@ -11,10 +11,17 @@ router.get('/', (req, res) => {
     res.redirect('/');
 })
 router.get('/create', (req, res) => {
-        res.render('create', {title: 'Create a new product'});
+        res.render('create-course', {title: 'Create a new course'});
 })
 router.post('/create', (req, res) => {
-
+    let courseData = req.body;
+    productService.createProduct({...courseData, creator: req.user._id})
+        .then(course =>{
+            res.redirect('/');
+        })
+        .catch(err=>{
+            console.log(err);
+        })
 
 })
 router.get('/:productId/details', (req, res)=>{

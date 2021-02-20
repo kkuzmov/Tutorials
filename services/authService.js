@@ -17,7 +17,6 @@ async function register({username, password}) {
 async function login({username,password}){
     let user = await User.findOne({username})
     if(!user) throw {message: 'User not found!'};
-    console.log(user);
 
     let isMatch = await bcrypt.compare(password, user.password);
     if(!isMatch) throw {message: 'Passwords do not match!'};
