@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
                 res.render('guest-home', {title: 'Guest-Home', courses})
             }
         })
-        .catch(err=> console.log(err));
+        .catch((error)=>res.status(404).render('/', {error}));
 })
 router.get('/create', (req, res) => {
         res.render('create-course', {title: 'Create a new course'});
@@ -29,7 +29,8 @@ router.post('/create', (req, res) => {
             res.redirect('/');
         })
         .catch(err=>{
-            console.log(err);
+            let error = Object.keys(err?.errors).map(x => ({ message: err.errors[x].properties.message}))[0];
+            res.status(404).render('create-course', {error})
         })
 
 })

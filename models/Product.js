@@ -4,17 +4,19 @@ const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        minlength: [4, 'Title should be at least 4 characters long']
     },
     description: {
         type: String,
         required: true,
-        maxlength: 50
+        maxlength: 50,
+        minlength: [20, 'Description should be at least 20 characters long']
     },
     imageUrl: {
         type: String,
         required: true,
-        // validate: /^https?/,
+        validate: [/^https?/, 'Bad image URL'],
     },
     duration: {
         type: String,
