@@ -5,10 +5,19 @@ const isAuthenticated = require('../middlewares/isAuthenticated');
 const isGuest = require('../middlewares/isGuest');
 const { validateProduct } = require('../controllers/helpers/productHelper'); // валидатор за продукт - провери дали е нужен
 
-// ВНИМАВАЙ С PATHS КЪМ VIEWS 
 
 router.get('/', (req, res) => {
-    res.redirect('/');
+    productService.getAll(req.query)
+        .then(courses =>{
+            if(req.user){
+                courses = courses.sort((a,b)=> b.createdAt - a.createdAt)
+                res.render('user-home', {title: 'Home', courses})
+            }else{
+                courses = courses.sort((a,b)=> b.usersEnrolled.length - a.usersEnrolled.length).slice(0,3);
+                res.render('guest-home', {title: 'Guest-Home', courses})
+            }
+        })
+        .catch(err=> console.log(err));
 })
 router.get('/create', (req, res) => {
         res.render('create-course', {title: 'Create a new course'});
