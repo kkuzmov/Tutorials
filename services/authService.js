@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { SECRET, SALT_ROUNDS } = require('../config/config')
+const { SECRET, SALT_ROUNDS, COOKIE_NAME } = require('../config/config')
 
 // ВНИМАВАЙ ДАЛИ ЩЕ СЕ ЛОГВА С USERNAME ИЛИ EMAIL!!!!!!!!
 // ВНИМАВАЙ КАКВО СЛАГАШ В COOKIE КАТО ГО ВРЪЩАШ!!
@@ -11,12 +11,13 @@ async function register({username, password}) {
     if(repeatUser){
         throw {message: 'Username already in use!'};
     }
-    const user = new User({username,password}); 
+    const user = new User({username, password}); 
     return await user.save();
 }
 async function login({username,password}){
     let user = await User.findOne({username})
     if(!user) throw {message: 'User not found!'};
+    console.log(user);
 
     let isMatch = await bcrypt.compare(password, user.password);
     if(!isMatch) throw {message: 'Passwords do not match!'};

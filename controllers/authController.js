@@ -10,14 +10,14 @@ const isGuest = require('../middlewares/isGuest');
 router.get('/login',(req, res) => {
     res.render('login', {title: 'Login'});
 })
-router.post('/login',async (req, res)=>{
+router.post('/login', async (req, res)=>{
     const {username, password} = req.body;
 
     try {
         let token = await authService.login({username, password})
 
         res.cookie(COOKIE_NAME, token, {httpOnly: true});
-        res.redirect('/products')
+        res.redirect('/')
     } catch (error) {
         res.status(404).render('login', {error});
     }
@@ -26,21 +26,26 @@ router.get('/register',(req, res) => {
     res.render('register', {title: 'Register'})
 })
 router.post('/register',async (req, res) => {
-    const {username, password, repeatPassword } = req.body;
+    const {username, password, rePassword } = req.body;
+    console.log(req.body)
 
-    // AKO E НУЖНО ВЕДНАГА ДА Е ЛОГНАТ, ПРОВЕРИ В BOOKING_UNI - ТАМ Е НАСТРОЕНО
-
-    if(password !== repeatPassword){
-        res.status(401).render('register', {message: 'Passwords do not match!'});
+    if(password !== rePassword){
+        res.status(401).render('register', {error: {message: 'Passwords do not match!'}});
         return;
     }
     try {
         let user = await authService.register({username, password});
-        res.redirect('/auth/login')
+    try {
+        let token = await authService.login({username, password})
+        res.cookie(COOKIE_NAME, token);
+        res.redirect('/')
     } catch (error) {
-        res.status(401).render('register', {error})
+        res.status(404).render('login', {error})
+    } 
+} catch (error) {
+        res.status(404).render('register', {error})
         return;
-    }
+}
 })
 router.get('/logout', (req, res)=>{
     res.clearCookie(COOKIE_NAME);
