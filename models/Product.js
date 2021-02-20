@@ -25,7 +25,10 @@ const productSchema = new mongoose.Schema({
         default: Date.now,
         required: true,
     },
-    usersEnrolled: []
+    creator: {
+        type: String
+    },
+    usersEnrolled: [],
 })
 
 

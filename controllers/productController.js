@@ -25,7 +25,13 @@ router.post('/create', (req, res) => {
 
 })
 router.get('/:productId/details', (req, res)=>{
-    
+        productService.getOne(req.params.productId)
+            .then(course =>{
+                let isEnrolled = course.usersEnrolled.includes(req.user._id);
+                let isCreator = course.creator === req.user._id;
+                res.render('course-details', {title: 'Details', course, isEnrolled, isCreator})
+            })
+            .catch(err => console.log(err));
 })
 router.get('/:productId/edit', (req, res)=>{
     
